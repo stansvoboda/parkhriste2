@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchGolemioData } from '../AppMap/api'; 
+import { getImageUrl } from '../AppMap/popupUtils';
 import './ParkList.css';
 
 // Haversine formula
@@ -61,6 +62,21 @@ const ParkList = () => {
     );
   };
 
+  // Náhled fotky; nefunkční obrázky (např. praha.eu u zahrad) skryjeme
+  const renderImage = (item) => {
+    const url = getImageUrl(item.properties);
+    if (!url) return null;
+    return (
+      <img
+        src={url}
+        alt={item.properties.name || ''}
+        loading="lazy"
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+        className="w-24 h-24 object-cover rounded shrink-0"
+      />
+    );
+  };
+
   return (
     <div className="park-list-container">
       {error && <div className="alert alert-error m-4 max-w-2xl"><span>{error}</span></div>}
@@ -68,17 +84,20 @@ const ParkList = () => {
       <h2 className="text-2xl font-bold m-4 text-primary">Seznam zahrad</h2>
       <ul className="park-list">
         {gardens?.features?.map((item, index) => (
-          <li key={`garden-${index}`} className="park-item">
-            <Link
-              to={`/mapa?type=garden&id=${item.properties.id}`}
-              className="link link-primary"
-            >
-              {item.properties.name || 'Bez názvu'} (Zahrada)
-            </Link>
-            {renderDistance(item)}
-            <p className="text-sm text-base-content">
-              {item.properties.address?.address_formatted || 'Adresa není k dispozici'}
-            </p>
+          <li key={`garden-${index}`} className="park-item flex gap-3 items-start">
+            {renderImage(item)}
+            <div>
+              <Link
+                to={`/mapa?type=garden&id=${item.properties.id}`}
+                className="link link-primary"
+              >
+                {item.properties.name || 'Bez názvu'} (Zahrada)
+              </Link>
+              {renderDistance(item)}
+              <p className="text-sm text-base-content">
+                {item.properties.address?.address_formatted || 'Adresa není k dispozici'}
+              </p>
+            </div>
           </li>
         )) || <p>Žádné zahrady nenalezeny.</p>}
       </ul>
@@ -86,17 +105,20 @@ const ParkList = () => {
       <h2 className="text-2xl font-bold m-4 text-primary">Seznam hřišť</h2>
       <ul className="park-list">
         {playgrounds?.features?.map((item, index) => (
-          <li key={`playground-${index}`} className="park-item">
-            <Link
-              to={`/mapa?type=playground&id=${item.properties.id}`}
-              className="link link-primary"
-            >
-              {item.properties.name || 'Bez názvu'} (Hřiště)
-            </Link>
-            {renderDistance(item)}
-            <p className="text-sm text-base-content">
-              {item.properties.address?.address_formatted || 'Adresa není k dispozici'}
-            </p>
+          <li key={`playground-${index}`} className="park-item flex gap-3 items-start">
+            {renderImage(item)}
+            <div>
+              <Link
+                to={`/mapa?type=playground&id=${item.properties.id}`}
+                className="link link-primary"
+              >
+                {item.properties.name || 'Bez názvu'} (Hřiště)
+              </Link>
+              {renderDistance(item)}
+              <p className="text-sm text-base-content">
+                {item.properties.address?.address_formatted || 'Adresa není k dispozici'}
+              </p>
+            </div>
           </li>
         )) || <p>Žádné hřiště nenalezeno.</p>}
       </ul>

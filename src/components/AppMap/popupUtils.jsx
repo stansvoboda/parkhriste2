@@ -1,11 +1,13 @@
+// Golemio vrací obrázky přes http:// – na https stránce je prohlížeč blokuje (mixed content)
+export const getImageUrl = (props) => props?.image?.url?.replace(/^http:\/\//, 'https://');
+
 export const createPopupContent = (feature) => {
   const props = feature.properties || {};
   const name = props.name || 'Bez názvu';
   const address = props.address?.address_formatted || 'Adresa není k dispozici';
   const desc = props.content || props.perex || '';
   const url = props.url ? `<a href="${props.url}" target="_blank" class="link link-primary">Web</a>` : '';
-  // Golemio vrací obrázky přes http:// – na https stránce je prohlížeč blokuje (mixed content)
-  const imageUrl = props.image?.url?.replace(/^http:\/\//, 'https://');
+  const imageUrl = getImageUrl(props);
   // onerror: některé obrázky už na zdroji neexistují (např. praha.eu u parků) → skryjeme je
   const image = imageUrl ? `<img src="${imageUrl}" alt="${name}" loading="lazy" onerror="this.remove()" class="mt-2 w-full h-auto rounded" />` : '';
 
