@@ -25,3 +25,7 @@ dist-ssr
 
 # Netlify
 .netlify/
+
+# Cloudflare
+.wrangler/
+.dev.vars

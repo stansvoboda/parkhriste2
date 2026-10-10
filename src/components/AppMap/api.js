@@ -1,20 +1,11 @@
-export const fetchGolemioData = async (endpoint, apiKey) => {
+// Golemio API voláme přes vlastní proxy (/api/golemio):
+// - produkce: Cloudflare Pages Function (functions/api/golemio/[[path]].js)
+// - vývoj: Vite dev server proxy (vite.config.js)
+// API klíč tak nikdy nekončí v prohlížeči.
+export const fetchGolemioData = async (endpoint) => {
   try {
-    // Detekce prostředí - production (Netlify) vs development (lokální)
-    const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-    
-    let res;
-    
-    if (isProduction) {
-      // Na produkci použijeme Netlify Function jako proxy
-      res = await fetch(`/.netlify/functions/golemio-proxy?path=${encodeURIComponent(endpoint)}`);
-    } else {
-      // Lokálně voláme Golemio API přímo
-      res = await fetch(`https://api.golemio.cz${endpoint}`, {
-        headers: { 'x-access-token': apiKey },
-      });
-    }
-    
+    const res = await fetch(`/api/golemio${endpoint}`);
+
     console.log(`[fetch] ${endpoint} →`, res.status);
 
     if (!res.ok || !res.headers.get('content-type')?.includes('application/json')) {

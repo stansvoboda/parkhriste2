@@ -24,7 +24,6 @@ const ParkList = () => {
   const [playgrounds, setPlaygrounds] = useState(null);
   const [error, setError] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const apiKey = import.meta.env.VITE_GOLEMIO_KEY;
 
   useEffect(() => {
     // Získání polohy uživatele
@@ -35,14 +34,14 @@ const ParkList = () => {
       );
     }
     const loadData = async () => {
-      if (!apiKey) return setError("API klíč není nastaven");
-      const gardensData = await fetchGolemioData("/v2/gardens", apiKey);
-      const playgroundsData = await fetchGolemioData("/v2/playgrounds", apiKey);
+      const gardensData = await fetchGolemioData("/v2/gardens");
+      const playgroundsData = await fetchGolemioData("/v2/playgrounds");
+      if (!gardensData && !playgroundsData) setError("Nepodařilo se načíst data z Golemio API");
       setGardens(gardensData);
       setPlaygrounds(playgroundsData);
     };
     loadData();
-  }, [apiKey]);
+  }, []);
 
   const renderDistance = (feature) => {
     if (!userLocation) return null;

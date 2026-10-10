@@ -51,7 +51,6 @@ const AppMap = ({ className, selectedItemType, selectedItemId }) => {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState([50.0755, 14.4378]);
-  const apiKey = import.meta.env.VITE_GOLEMIO_KEY;
   // Získání aktuální polohy uživatele
   useEffect(() => {
     if (navigator.geolocation) {
@@ -64,12 +63,10 @@ const AppMap = ({ className, selectedItemType, selectedItemId }) => {
 
   useEffect(() => {
     const loadData = async () => {
-      if (!apiKey) return setError("API klíč není nastaven");
-
       try {
         const [gardensData, playgroundsData] = await Promise.all([
-          fetchGolemioData("/v2/gardens", apiKey),
-          fetchGolemioData("/v2/playgrounds", apiKey),
+          fetchGolemioData("/v2/gardens"),
+          fetchGolemioData("/v2/playgrounds"),
         ]);
         
         setGardens(gardensData);
@@ -80,7 +77,7 @@ const AppMap = ({ className, selectedItemType, selectedItemId }) => {
     };
 
     loadData();
-  }, [apiKey]);
+  }, []);
 
   const playgroundStyle = { color: '#0000ff', weight: 2, opacity: 0.8 };
   const selectedStyle = { color: '#ff0000', weight: 4, opacity: 1, fillOpacity: 0.5 };
